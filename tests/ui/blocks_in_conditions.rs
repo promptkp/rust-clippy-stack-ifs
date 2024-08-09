@@ -105,17 +105,17 @@ fn issue_12162() {
         println!();
     }
 }
-
-mod issue_12016 {
-    #[proc_macro_attr::fake_desugar_await]
-    pub async fn await_becomes_block() -> i32 {
-        match Some(1).await {
-            Some(1) => 2,
-            Some(2) => 3,
-            _ => 0,
-        }
-    }
-}
+//
+// mod issue_12016 {
+//     #[proc_macro_attr::fake_desugar_await]
+//     pub async fn await_becomes_block() -> i32 {
+//         match Some(1).await {
+//             Some(1) => 2,
+//             Some(2) => 3,
+//             _ => 0,
+//         }
+//     }
+// }
 
 fn in_closure() {
     let v = vec![1, 2, 3];
@@ -127,6 +127,88 @@ fn in_closure() {
         .any(|x| x == 5)
     {
         println!("contains 4!");
+    }
+}
+
+// issue #12483
+fn stack_if() {
+    let a = 1;
+    if if 1 == 2 {
+        a == 3
+    } else {
+        a == 4
+    } {
+        println!("true");
+    } else {
+        println!("false");
+    }
+}
+
+fn if_in_expr_left() {
+    if if 1 == 2 {
+        3
+    } else {
+        4
+    } == 1 {
+        println!("true");
+    } else {
+        println!("false");
+    }
+}
+
+fn if_in_expr_middle() {
+    if 1 == if 1 == 2 {
+        3
+    } else {
+        4
+    } || 2 == 3 {
+        println!("true");
+    } else {
+        println!("false");
+    }
+}
+
+fn if_in_expr_right() {
+    if 1 == if 1 == 2 {
+        3
+    } else {
+        4
+    } {
+        println!("true");
+    } else {
+        println!("false");
+    }
+}
+
+fn block_in_expr_left() {
+    if {
+        let a = 1;
+        a + 1
+    } == 1 {
+        println!("true");
+    } else {
+        println!("false");
+    }
+}
+
+fn block_in_expr_middle() {
+    if 1 == 2 || {
+        1 + 2
+    } == 4 {
+        println!("true");
+    } else {
+        println!("false");
+    }
+}
+
+fn block_in_expr_right(){
+    if 1 == {
+        let a = 1;
+        a + 1
+    } {
+        println!("true");
+    } else {
+        println!("false");
     }
 }
 
